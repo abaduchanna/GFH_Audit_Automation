@@ -6877,7 +6877,7 @@ class GFHApp(tk.Tk):
             _tog_frame,
             text="☀️" if self.theme_manager.current_theme == "dark" else "🌙",
             bg=self.COLOR_NAVY, fg="white",
-            activebackground=self.COLOR_RED, activeforeground="white",
+            activebackground=self.COLOR_NAVY, activeforeground="white",
             font=("Segoe UI Emoji", 13), width=3, relief="flat",
             highlightthickness=0, borderwidth=0, cursor="hand2",
             command=self._toggle_theme

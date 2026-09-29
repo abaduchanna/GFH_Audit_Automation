@@ -136,7 +136,9 @@ class FixedHeaderManager:
             command=toggle_and_callback,
             bg=self.BRAND_NAVY,
             fg="white",
-            activebackground=self.BRAND_RED,
+            # Tk has no true transparent button background; matching the
+            # header surface makes the emoji appear transparent in all states.
+            activebackground=self.BRAND_NAVY,
             activeforeground="white",
             relief=tk.FLAT,
             width=3,
