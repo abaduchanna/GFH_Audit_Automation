@@ -6633,8 +6633,11 @@ class GFHApp(tk.Tk):
         self.COLOR_INPUT = colors.get("input", colors.get("panel", "#ffffff"))
         self.COLOR_BORDER = colors.get("border", "#334")
         self.COLOR_MUTED = colors.get("text_dim", "#8090b0")
-        self._apply_styles()
+        # Generic theme first, app-specific styles last. Keeping this order
+        # identical to _apply_theme() prevents fonts/buttons/tabs changing
+        # appearance after the first light/dark toggle.
         apply_theme_to_window(self, self.theme_manager)
+        self._apply_styles()
 
     # ── Window state save/restore for WhatsApp sending ──────────────────
     # When WhatsApp Desktop is brought to the foreground (via
@@ -6725,14 +6728,14 @@ class GFHApp(tk.Tk):
         s.configure("Header.TLabel", font=("Segoe UI", sz(19), "bold"), background=self.COLOR_NAVY, foreground="#FFFFFF")
         s.configure("BrandSub.TLabel", font=("Segoe UI", sz(10), "bold"), background=self.COLOR_NAVY, foreground="#DCE2F2")
         s.configure("Sub.TLabel", font=("Segoe UI", sz(10)), background=self.COLOR_BG, foreground=self.COLOR_MUTED)
-        # Buttons match the sun/moon theme-toggle button in the header: solid brand-red
-        # background with white bold text.
-        s.configure("TButton", padding=(10, 6), font=("Segoe UI", sz(9), "bold"), background=self.COLOR_RED, foreground="#FFFFFF", bordercolor=self.COLOR_RED, focusthickness=1, focuscolor=self.COLOR_RED)
+        # Neutral at rest, brand orange only on hover/press. This mapping is
+        # reapplied after every theme switch so the look never jumps.
+        s.configure("TButton", padding=(10, 6), font=("Segoe UI", sz(9), "bold"), background=self.COLOR_PANEL_ALT, foreground=self.COLOR_TEXT, bordercolor=self.COLOR_RED, focusthickness=1, focuscolor=self.COLOR_RED)
         s.map(
             "TButton",
-            background=[("active", "#D8431A"), ("pressed", "#B8330F")],
-            foreground=[("pressed", "#FFFFFF"), ("active", "#FFFFFF")],
-            bordercolor=[("active", self.COLOR_RED), ("pressed", self.COLOR_RED)],
+            background=[("disabled", self.COLOR_PANEL_ALT), ("pressed", "#B8330F"), ("active", self.COLOR_RED)],
+            foreground=[("disabled", self.COLOR_MUTED), ("pressed", "#FFFFFF"), ("active", "#FFFFFF")],
+            bordercolor=[("disabled", self.COLOR_BORDER), ("pressed", self.COLOR_RED), ("active", self.COLOR_RED)],
         )
         s.configure("TEntry",
                     fieldbackground=self.COLOR_INPUT,
@@ -6759,8 +6762,8 @@ class GFHApp(tk.Tk):
         s.configure("TNotebook.Tab", padding=(18, 9), font=("Segoe UI", sz(10), "bold"), background=self.COLOR_PANEL_ALT, foreground=self.COLOR_TEXT)
         s.map(
             "TNotebook.Tab",
-            background=[("selected", self.COLOR_RED), ("active", "#FFE8EC")],
-            foreground=[("selected", "#FFFFFF"), ("active", self.COLOR_NAVY)],
+            background=[("active", self.COLOR_RED), ("selected", self.COLOR_PANEL_ALT)],
+            foreground=[("active", "#FFFFFF"), ("selected", self.COLOR_TEXT)],
         )
         s.configure("Treeview", rowheight=max(20, round(32 * self.zoom_scale)), font=("Segoe UI", sz(10)), background=self.COLOR_CARD, fieldbackground=self.COLOR_CARD, foreground=self.COLOR_TEXT, bordercolor=self.COLOR_BORDER, borderwidth=1)
         s.configure("Treeview.Heading", font=("Segoe UI", sz(10), "bold"), background=self.COLOR_NAVY, foreground="#FFFFFF", relief="flat")
