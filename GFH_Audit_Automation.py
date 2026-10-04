@@ -6804,7 +6804,7 @@ class GFHApp(tk.Tk):
         # defaults that were previously hardcoded here.
         _c = self.theme_manager.get_colors()
         self.COLOR_NAVY     = "#090d26"
-        self.COLOR_RED      = "#f0541c"
+        self.COLOR_RED      = "#e83030"
         self.COLOR_BG       = _c["bg"]
         self.COLOR_CARD     = _c.get("panel",     _c["bg"])
         self.COLOR_TEXT     = _c["text"]
