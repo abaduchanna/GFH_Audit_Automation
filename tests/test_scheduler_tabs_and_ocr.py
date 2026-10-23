@@ -60,7 +60,7 @@ def test_scheduler_opens_tabs_mode_aware_and_logs():
     startup = _get_source("_startup_sequence") if False else None
     # _startup_sequence is nested; check it via raw source
     assert '_sched_open_tabs()' in SRC
-    assert '_humanize_list(names) + " tabs."' in SRC
+    assert '_humanize_list(list(names)) + " tabs."' in SRC
 
 
 def test_old_ts_tab_message_gone():
@@ -179,8 +179,8 @@ def test_b2b_handles_sso_company_id_stage():
     # The SSO login page shows ONLY #companyId (+ Edit/Clear/Submit) first;
     # the flow must submit it before Username/Password can appear.
     assert "sso_submits" in login
-    assert "SSO company-ID page — company ID submitted" in login
-    assert "sso_submits < 3" in login
+    assert "SSO Access Code page" in login
+    assert "sso_submits >= 4" in login
     # types the company ID into the SSO field when its value differs
     assert 'get_attribute("value")' in login
     # step-1 transition wait breaks early once sso.b2bsoft.com is reached
