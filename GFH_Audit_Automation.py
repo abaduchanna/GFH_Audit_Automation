@@ -7374,14 +7374,12 @@ class GFHApp(tk.Tk):
         _tog_frame = tk.Frame(header, bg=self.COLOR_NAVY)
         _tog_frame.pack(side="right", padx=(0, 18), pady=9)
         _tog_frame._tag = "header"
-        self._theme_btn = tk.Button(
-            _tog_frame,
-            text="☀️" if self.theme_manager.current_theme == "dark" else "🌙",
-            bg=self.COLOR_NAVY, fg="white",
-            activebackground=self.COLOR_NAVY, activeforeground="white",
-            font=("Segoe UI Emoji", 13), width=3, relief="flat",
-            highlightthickness=0, borderwidth=0, cursor="hand2",
-            command=self._toggle_theme
+        # STANDARD theme toggle (all VidaPay / GFH / VDS / 3SVerse apps): vector
+        # sun (dark theme) / crescent moon (light theme), transparent on navy.
+        from theme_manager import create_toggle_canvas
+        self._theme_btn = create_toggle_canvas(
+            _tog_frame, self.theme_manager, self._toggle_theme,
+            bg=self.COLOR_NAVY,
         )
         self._theme_btn.pack()
         self._theme_btn._tag = "header"
@@ -8220,7 +8218,10 @@ class GFHApp(tk.Tk):
         self.theme_manager.current_theme = new_theme
         self.theme_manager.save_theme(new_theme)
         if hasattr(self, "_theme_btn"):
-            self._theme_btn.configure(text="☀️" if new_theme == "dark" else "🌙")
+            try:
+                self._theme_btn._render_theme_glyph()
+            except Exception:
+                pass
         self._apply_theme()
 
     def _apply_theme(self, colors=None):
