@@ -17,6 +17,7 @@ jobs:
       matrix:
         app:
           - GFH_Audit_Automation
+          - GFH_Audit_Automation_Qt
 
     steps:
       - name: Checkout
