@@ -10,10 +10,18 @@ Build command: pyinstaller GFH_Audit_Automation.spec
 
 block_cipher = None
 
+# The Cython-protected entry ships as a compiled extension, not plain .py
+# source, so PyInstaller's static import scanner can't see what it imports
+# and openpyxl's own PyInstaller hook (which bundles its data files) never
+# fires from a bare name in hiddenimports alone. collect_all() forces that
+# hook to run explicitly.
+from PyInstaller.utils.hooks import collect_all
+_openpyxl_datas, _openpyxl_binaries, _openpyxl_hidden = collect_all('openpyxl')
+
 a = Analysis(
     ['GFH_Audit_Automation.py'],
     pathex=['.'],
-    binaries=[],
+    binaries=_openpyxl_binaries,
     datas=[
         ('native_titlebar.py', '.'),
         ('assets', 'assets'),
@@ -23,7 +31,7 @@ a = Analysis(
         ('theme_manager.py', '.'),
         ('logo_handler.py', '.'),
         ('header_manager.py', '.'),
-    ],
+    ] + _openpyxl_datas,
     hiddenimports=[
         'tkinter',
         '_tkinter',
@@ -56,7 +64,12 @@ a = Analysis(
         'PIL',
         'openpyxl',
         'pyautogui',
-    ],
+        'pygetwindow',
+        'win32api',
+        'pywintypes',
+        'win32con',
+        'win32clipboard',
+    ] + _openpyxl_hidden,
     hookspath=[],
     hooksconfig={
         'matplotlib': {'backends': ''},

@@ -29,10 +29,19 @@ jobs:
           python-version: '3.11'
 
       - name: Install dependencies
+        shell: bash
         run: |
           python -m pip install --upgrade pip setuptools wheel
           python -m pip install -r requirements.txt
           python -m pip install pyinstaller selenium
+
+      # The windowed EXE shows an "Unhandled exception" dialog and stays
+      # alive when an import is missing, so the startup smoke test below
+      # cannot catch an unbundled dependency. Fail here instead.
+      - name: Verify runtime dependencies are importable
+        shell: bash
+        run: |
+          python -c "import PySide6.QtWidgets, shiboken6, openpyxl, PIL, pyautogui, pygetwindow, pyperclip, pytesseract, selenium, win32api, win32con, win32clipboard, pywintypes; print('runtime dependencies OK')"
 
       - name: Protect application sources (compile to native extensions)
         shell: bash

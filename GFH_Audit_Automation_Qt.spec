@@ -13,10 +13,19 @@ config file locations; only the UI toolkit differs.
 
 block_cipher = None
 
+# The Cython-protected entry ships as a compiled extension, not plain .py
+# source, so PyInstaller's static import scanner can't see what it imports
+# and PySide6's/openpyxl's own PyInstaller hooks (which bundle Qt's native
+# DLLs/plugins and openpyxl's data files) never fire from a bare name in
+# hiddenimports alone. collect_all() forces those hooks to run explicitly.
+from PyInstaller.utils.hooks import collect_all
+_pyside6_datas, _pyside6_binaries, _pyside6_hidden = collect_all('PySide6')
+_openpyxl_datas, _openpyxl_binaries, _openpyxl_hidden = collect_all('openpyxl')
+
 a = Analysis(
     ['GFH_Audit_Automation_Qt.py'],
     pathex=['.'],
-    binaries=[],
+    binaries=_pyside6_binaries + _openpyxl_binaries,
     datas=[
         ('assets', 'assets'),
         ('GFH_Telecom_Logo.png', '.'),
@@ -25,7 +34,7 @@ a = Analysis(
         ('theme_manager_qt.py', '.'),
         ('header_manager_qt.py', '.'),
         ('native_titlebar_qt.py', '.'),
-    ],
+    ] + _pyside6_datas + _openpyxl_datas,
     hiddenimports=[
         'PySide6',
         'PySide6.QtCore',
@@ -58,6 +67,8 @@ a = Analysis(
         'pytesseract',
         'pyautogui',
         'pygetwindow',
+        'win32api',
+        'pywintypes',
         'win32clipboard',
         'win32con',
         'PIL',
@@ -66,7 +77,7 @@ a = Analysis(
         'header_manager_qt',
         'native_titlebar_qt',
         'runtime_guard',
-    ],
+    ] + _pyside6_hidden + _openpyxl_hidden,
     hookspath=[],
     hooksconfig={
         'matplotlib': {'backends': ''},
